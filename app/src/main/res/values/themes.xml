@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Mathquiz" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">#C7B8FF</item>
+        <item name="colorSecondary">#C7B8FF</item>
+        <item name="android:windowBackground">@color/bg_light</item>
+        <item name="android:windowBackground">@color/white</item>
+    </style>
+
+</resources>

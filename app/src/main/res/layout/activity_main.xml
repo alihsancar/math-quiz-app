@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@color/bg_main">
+
+    <!-- LOGO -->
+    <ImageView
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:src="@drawable/logo_mathquiz"
+        android:contentDescription="MathQuiz Logo"
+        android:layout_marginBottom="8dp"/>
+
+    <!-- BAŞLIK -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MathQuiz"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/text_main"
+        android:letterSpacing="0.05"
+        android:layout_marginBottom="28dp"/>
+
+    <!-- OYNA -->
+    <Button
+        android:id="@+id/btnPlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Oyna"
+        android:textSize="17sp"
+        android:textColor="@color/btn_text"
+        android:background="@drawable/btn_main"
+        android:backgroundTint="@color/btn_main"
+        android:layout_marginBottom="14dp"/>
+
+    <!-- AYARLAR -->
+    <Button
+        android:id="@+id/btnSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ayarlar"
+        android:textSize="17sp"
+        android:textColor="@color/btn_text"
+        android:background="@drawable/btn_main"
+        android:backgroundTint="@color/btn_main"
+        android:layout_marginBottom="14dp"/>
+
+    <!-- GEÇMİŞ -->
+    <Button
+        android:id="@+id/btnHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Geçmiş Oyunlar"
+        android:textSize="17sp"
+        android:textColor="@color/btn_text"
+        android:background="@drawable/btn_main"
+        android:backgroundTint="@color/btn_main"/>
+
+</LinearLayout>

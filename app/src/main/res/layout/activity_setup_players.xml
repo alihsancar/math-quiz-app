@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Oyuncuları Ayarla"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Oyuncu 1 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Oyuncu 1 İsmi"/>
+
+        <EditText
+            android:id="@+id/etP1Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Örn: Ali"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Oyuncu 1 Avatar"
+            android:layout_marginTop="10dp"/>
+
+        <GridLayout
+            android:id="@+id/gridP1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:id="@+id/p1a1"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_columnWeight="1"
+                android:src="@drawable/avatar1"
+                android:padding="4dp"
+                android:background="@drawable/avatar_selected"/>
+
+            <ImageView
+                android:id="@+id/p1a2"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_columnWeight="1"
+                android:src="@drawable/avatar2"
+                android:padding="4dp"
+                android:background="@drawable/avatar_unselected"/>
+
+            <ImageView
+                android:id="@+id/p1a3"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_columnWeight="1"
+                android:src="@drawable/avatar3"
+                android:padding="4dp"
+                android:background="@drawable/avatar_unselected"/>
+
+            <ImageView
+                android:id="@+id/p1a4"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_columnWeight="1"
+                android:src="@drawable/avatar4"
+                android:padding="4dp"
+                android:background="@drawable/avatar_unselected"/>
+        </GridLayout>
+
+        <!-- Oyuncu 2 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Oyuncu 2 İsmi"
+            android:layout_marginTop="16dp"/>
+
+        <EditText
+            android:id="@+id/etP2Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Örn: Furkan" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Oyuncu 2 Avatar"
+            android:layout_marginTop="10dp"/>
+
+        <GridLayout
+            android:id="@+id/gridP2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:id="@+id/p2a1"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_columnWeight="1"
+                android:src="@drawable/avatar1"
+                android:padding="4dp"
+                android:background="@drawable/avatar_selected"/>
+
+            <ImageView
+                android:id="@+id/p2a2"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_columnWeight="1"
+                android:src="@drawable/avatar2"
+                android:padding="4dp"
+                android:background="@drawable/avatar_unselected"/>
+
+            <ImageView
+                android:id="@+id/p2a3"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_columnWeight="1"
+                android:src="@drawable/avatar3"
+                android:padding="4dp"
+                android:background="@drawable/avatar_unselected"/>
+
+            <ImageView
+                android:id="@+id/p2a4"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_columnWeight="1"
+                android:src="@drawable/avatar4"
+                android:padding="4dp"
+                android:background="@drawable/avatar_unselected"/>
+        </GridLayout>
+
+        <Button
+            android:id="@+id/btnStartGame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Oyunu Başlat"
+            android:layout_marginTop="24dp"/>
+
+    </LinearLayout>
+</ScrollView>

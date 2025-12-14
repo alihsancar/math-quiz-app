@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <!-- ÜSTTE SIRA SİZDE (P1) -->
+    <TextView
+        android:id="@+id/tvTurnTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sıra Sizde"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="#FF6B6B"
+        android:padding="10dp"
+        android:layout_centerHorizontal="true"/>
+
+    <!-- PLAYER 1 -->
+    <LinearLayout
+        android:id="@+id/layoutP1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTurnTop"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/imgP1"
+            android:layout_width="56dp"
+            android:layout_height="56dp"/>
+
+        <TextView
+            android:id="@+id/tvP1Name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingStart="12dp"/>
+
+        <TextView
+            android:id="@+id/tvP1Score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:background="#DDDDDD"/>
+    </LinearLayout>
+
+    <!-- ORTA SORU -->
+    <LinearLayout
+        android:id="@+id/layoutQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/tvQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:background="#EEEEEE"
+            android:padding="24dp"/>
+
+        <TextView
+            android:id="@+id/tvResultCenter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/tvTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp"/>
+
+        <EditText
+            android:id="@+id/etAnswer"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:hint="Cevap"
+            android:gravity="center"
+            android:inputType="numberSigned"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gönder"
+            android:layout_marginTop="10dp"/>
+    </LinearLayout>
+
+    <!-- PLAYER 2 -->
+    <LinearLayout
+        android:id="@+id/layoutP2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/imgP2"
+            android:layout_width="56dp"
+            android:layout_height="56dp"/>
+
+        <TextView
+            android:id="@+id/tvP2Name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingStart="12dp"/>
+
+        <TextView
+            android:id="@+id/tvP2Score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:background="#DDDDDD"/>
+    </LinearLayout>
+
+    <!-- ALTTA SIRA SİZDE (P2) -->
+    <TextView
+        android:id="@+id/tvTurnBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sıra Sizde"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:background="#FF6B6B"
+        android:padding="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/layoutP2"
+        android:visibility="gone"/>
+
+    <!-- 🔥 SKOR ANİMASYONU -->
+    <TextView
+        android:id="@+id/tvScoreAnim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+10"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_green_dark"
+        android:visibility="gone"/>
+
+</RelativeLayout>

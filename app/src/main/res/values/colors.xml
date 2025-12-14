@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light -->
+    <color name="bg_light">#FFFFFF</color>
+    <color name="card_light">#F2F2F2</color>
+    <color name="text_light">#000000</color>
+
+    <!-- Dark -->
+    <color name="bg_dark">#121212</color>
+    <color name="card_dark">#1E1E1E</color>
+    <color name="text_dark">#FFFFFF</color>
+
+    <color name="bg_main">#FFFFFF</color>
+    <color name="text_main">#000000</color>
+
+    <color name="btn_main">#C8B6FF</color>
+    <color name="btn_text">#FFFFFF</color>
+
+    <color name="card_bg">#F4F4F4</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+</resources>
