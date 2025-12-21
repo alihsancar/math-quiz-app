@@ -1,3 +1,4 @@
+//ResultActivity.java
 package com.example.mathquiz;
 
 import android.content.SharedPreferences;

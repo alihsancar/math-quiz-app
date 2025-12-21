@@ -27,16 +27,26 @@
         android:letterSpacing="0.05"
         android:layout_marginBottom="28dp"/>
 
-    <!-- OYNA -->
+    <!-- OFFLINE -->
     <Button
-        android:id="@+id/btnPlay"
+        android:id="@+id/btnOffline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Oyna"
+        android:text="Offline - İki Kişi"
         android:textSize="17sp"
         android:textColor="@color/btn_text"
         android:background="@drawable/btn_main"
-        android:backgroundTint="@color/btn_main"
+        android:layout_marginBottom="14dp"/>
+
+    <!-- ONLINE -->
+    <Button
+        android:id="@+id/btnOnline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Online - İki Kişi"
+        android:textSize="17sp"
+        android:textColor="@color/btn_text"
+        android:background="@drawable/btn_main"
         android:layout_marginBottom="14dp"/>
 
     <!-- AYARLAR -->
@@ -48,7 +58,6 @@
         android:textSize="17sp"
         android:textColor="@color/btn_text"
         android:background="@drawable/btn_main"
-        android:backgroundTint="@color/btn_main"
         android:layout_marginBottom="14dp"/>
 
     <!-- GEÇMİŞ -->
@@ -59,7 +68,6 @@
         android:text="Geçmiş Oyunlar"
         android:textSize="17sp"
         android:textColor="@color/btn_text"
-        android:background="@drawable/btn_main"
-        android:backgroundTint="@color/btn_main"/>
+        android:background="@drawable/btn_main"/>
 
 </LinearLayout>
