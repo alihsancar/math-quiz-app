@@ -1,209 +1,382 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground"
-    android:padding="20dp">
+    android:fillViewport="true"
+    android:background="@drawable/settings_background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <!-- BAŞLIK -->
+        <!-- TITLE -->
         <TextView
-            android:id="@+id/tvSettingsTitle"
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ayarlar"
-            android:textSize="26sp"
+            android:text="⚙️ Ayarlar"
+            android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface"
-            android:layout_marginBottom="20dp" />
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#1A1A2E"
+            android:layout_gravity="center"
+            android:layout_marginBottom="24dp"/>
 
-        <!-- ZORLUK -->
-        <LinearLayout
+        <!-- DIFFICULTY CARD -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardDifficulty"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="?attr/colorSurface"
-            android:padding="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
             android:layout_marginBottom="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Zorluk Seviyesi"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"
-                android:layout_marginBottom="8dp" />
-
-            <RadioGroup
-                android:id="@+id/rgDifficulty"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/settings_card_bg"
+                android:padding="20dp">
 
-                <RadioButton
-                    android:id="@+id/rbEasy"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Kolay"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
 
-                <RadioButton
-                    android:id="@+id/rbMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Orta"
-                    android:textColor="?attr/colorOnSurface" />
+                    <TextView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:text="🎯"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"/>
 
-                <RadioButton
-                    android:id="@+id/rbHard"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Zor"
-                    android:textColor="?attr/colorOnSurface" />
-            </RadioGroup>
-        </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Zorluk Seviyesi"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A2E"
+                        android:fontFamily="sans-serif-medium"/>
+                </LinearLayout>
 
-        <!-- SORU SAYISI -->
-        <LinearLayout
+                <RadioGroup
+                    android:id="@+id/rgDifficulty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <RadioButton
+                        android:id="@+id/rbEasy"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="😊 Kolay"
+                        android:textSize="16sp"
+                        android:textColor="#1A1A2E"
+                        android:padding="8dp"/>
+
+                    <RadioButton
+                        android:id="@+id/rbMedium"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🤔 Orta"
+                        android:textSize="16sp"
+                        android:textColor="#1A1A2E"
+                        android:padding="8dp"/>
+
+                    <RadioButton
+                        android:id="@+id/rbHard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🔥 Zor"
+                        android:textSize="16sp"
+                        android:textColor="#1A1A2E"
+                        android:padding="8dp"/>
+                </RadioGroup>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- QUESTION COUNT CARD -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardQuestions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="?attr/colorSurface"
-            android:padding="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
             android:layout_marginBottom="16dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Soru Sayısı"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"
-                android:layout_marginBottom="8dp" />
-
-            <RadioGroup
-                android:id="@+id/rgQuestionCount"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:background="@drawable/settings_card_bg"
+                android:padding="20dp">
 
-                <RadioButton
-                    android:id="@+id/rbQ5"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="5"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
 
-                <RadioButton
-                    android:id="@+id/rbQ7"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:text="📝"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Soru Sayısı"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A2E"
+                        android:fontFamily="sans-serif-medium"/>
+                </LinearLayout>
+
+                <RadioGroup
+                    android:id="@+id/rgQuestionCount"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="7"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:orientation="horizontal">
 
-                <RadioButton
-                    android:id="@+id/rbQ10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="10"
-                    android:textColor="?attr/colorOnSurface" />
-            </RadioGroup>
-        </LinearLayout>
+                    <RadioButton
+                        android:id="@+id/rbQ5"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="5 Soru"
+                        android:textSize="15sp"
+                        android:textColor="#1A1A2E"
+                        android:padding="8dp"/>
 
-        <!-- SÜRE -->
-        <LinearLayout
+                    <RadioButton
+                        android:id="@+id/rbQ7"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="7 Soru"
+                        android:textSize="15sp"
+                        android:textColor="#1A1A2E"
+                        android:padding="8dp"/>
+
+                    <RadioButton
+                        android:id="@+id/rbQ10"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="10 Soru"
+                        android:textSize="15sp"
+                        android:textColor="#1A1A2E"
+                        android:padding="8dp"/>
+                </RadioGroup>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- TIME CARD -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="?attr/colorSurface"
-            android:padding="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/settings_card_bg"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:text="⏱️"
+                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Süre (saniye)"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A2E"
+                        android:fontFamily="sans-serif-medium"/>
+                </LinearLayout>
+
+                <RadioGroup
+                    android:id="@+id/rgTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/rbT15"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="15s"
+                        android:textSize="14sp"
+                        android:textColor="#1A1A2E"/>
+
+                    <RadioButton
+                        android:id="@+id/rbT20"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="20s"
+                        android:textSize="14sp"
+                        android:textColor="#1A1A2E"/>
+
+                    <RadioButton
+                        android:id="@+id/rbT30"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="30s"
+                        android:textSize="14sp"
+                        android:textColor="#1A1A2E"/>
+
+                    <RadioButton
+                        android:id="@+id/rbT45"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="45s"
+                        android:textSize="14sp"
+                        android:textColor="#1A1A2E"/>
+
+                    <RadioButton
+                        android:id="@+id/rbT60"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="60s"
+                        android:textSize="14sp"
+                        android:textColor="#1A1A2E"/>
+                </RadioGroup>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- SOUND CARD -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardSound"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/settings_card_bg"
+                android:padding="20dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="🔊"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="12dp"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ses Efektleri"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A2E"
+                    android:fontFamily="sans-serif-medium"/>
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchSound"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:thumbTint="#6A1B9A"
+                    app:trackTint="#E1BEE7"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- DARK MODE CARD -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardDarkMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
             android:layout_marginBottom="24dp">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Süre (saniye)"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"
-                android:layout_marginBottom="8dp" />
-
-            <RadioGroup
-                android:id="@+id/rgTime"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:background="@drawable/settings_card_bg"
+                android:padding="20dp"
+                android:gravity="center_vertical">
 
-                <RadioButton android:id="@+id/rbT15" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="15" android:textColor="?attr/colorOnSurface"/>
-                <RadioButton android:id="@+id/rbT20" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="20" android:textColor="?attr/colorOnSurface"/>
-                <RadioButton android:id="@+id/rbT30" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="30" android:textColor="?attr/colorOnSurface"/>
-                <RadioButton android:id="@+id/rbT45" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="45" android:textColor="?attr/colorOnSurface"/>
-                <RadioButton android:id="@+id/rbT60" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="60" android:textColor="?attr/colorOnSurface"/>
-            </RadioGroup>
-        </LinearLayout>
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="🌙"
+                    android:textSize="24sp"
+                    android:gravity="center"
+                    android:layout_marginEnd="12dp"/>
 
-        <!-- SES -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="12dp"
-            android:background="?attr/colorSurface"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_vertical">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Karanlık Mod"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A2E"
+                    android:fontFamily="sans-serif-medium"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Ses Efektleri"
-                android:textSize="16sp"
-                android:textColor="?attr/colorOnSurface"/>
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchDarkMode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:thumbTint="#1A237E"
+                    app:trackTint="#C5CAE9"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
-            <Switch
-                android:id="@+id/switchSound"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-
-        <!-- DARK MODE -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="12dp"
-            android:background="?attr/colorSurface"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Karanlık Mod"
-                android:textSize="16sp"
-                android:textColor="?attr/colorOnSurface"/>
-
-            <Switch
-                android:id="@+id/switchDarkMode"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-
-        <!-- KAYDET -->
-        <Button
+        <!-- SAVE BUTTON -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveSettings"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Kaydet"
+            android:layout_height="60dp"
+            android:text="💾 Ayarları Kaydet"
             android:textSize="18sp"
-            android:background="@drawable/btn_main"
-            android:backgroundTint="@null"
-            android:padding="14dp" />
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:fontFamily="sans-serif-medium"
+            android:background="@drawable/btn_save_settings"
+            app:cornerRadius="16dp"
+            android:elevation="6dp"/>
 
     </LinearLayout>
 </ScrollView>

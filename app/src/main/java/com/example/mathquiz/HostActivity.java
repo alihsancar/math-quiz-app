@@ -6,13 +6,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Button;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
-import org.json.JSONObject;
+import com.google.android.material.button.MaterialButton;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -29,8 +30,9 @@ public class HostActivity extends AppCompatActivity {
     private static final String TAG = "HostActivity";
     private static final int PORT = 5050;
 
-    private TextView tvStatus, tvIp;
-    private Button btnCancel;
+    private TextView tvTitle, tvStatus, tvIp, tvPlayerName, tvWaiting;
+    private MaterialButton btnCancel;
+    private CardView cardInfo;
 
     private ServerSocket serverSocket;
     private volatile boolean isWaiting = true;
@@ -45,23 +47,31 @@ public class HostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_host);
 
-        initViews();
+        bindViews();
         loadPlayerInfo();
+        animateEntrance();
         startServer();
     }
 
-    private void initViews() {
+    private void bindViews() {
+        tvTitle = findViewById(R.id.tvTitle);
         tvStatus = findViewById(R.id.tvStatus);
         tvIp = findViewById(R.id.tvIp);
+        tvPlayerName = findViewById(R.id.tvPlayerName);
+        tvWaiting = findViewById(R.id.tvWaiting);
         btnCancel = findViewById(R.id.btnCancel);
+        cardInfo = findViewById(R.id.cardInfo);
 
         String ip = Utils.getLocalIpAddress();
-        tvIp.setText("IP: " + ip);
-        tvStatus.setText("Rakip bekleniyor...");
+        tvIp.setText(ip);
+        tvPlayerName.setText(hostName);
 
         btnCancel.setOnClickListener(v -> {
-            isWaiting = false;
-            finish();
+            animateButtonClick();
+            new Handler().postDelayed(() -> {
+                isWaiting = false;
+                finish();
+            }, 200);
         });
     }
 
@@ -79,6 +89,82 @@ public class HostActivity extends AppCompatActivity {
         hostAvatar = getIntent().getIntExtra("playerAvatar", R.drawable.avatar1);
     }
 
+    private void animateEntrance() {
+        // Title fade in
+        tvTitle.setAlpha(0f);
+        tvTitle.setTranslationY(-50f);
+        tvTitle.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(600)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
+
+        // Card scale in
+        cardInfo.setScaleX(0.8f);
+        cardInfo.setScaleY(0.8f);
+        cardInfo.setAlpha(0f);
+        cardInfo.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .alpha(1f)
+                .setDuration(600)
+                .setStartDelay(200)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
+
+        // Waiting animation
+        tvWaiting.setAlpha(0f);
+        tvWaiting.animate()
+                .alpha(1f)
+                .setDuration(600)
+                .setStartDelay(400)
+                .start();
+
+        startWaitingAnimation();
+
+        // Button from bottom
+        btnCancel.setTranslationY(200f);
+        btnCancel.setAlpha(0f);
+        btnCancel.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(600)
+                .setStartDelay(600)
+                .start();
+    }
+
+    private void startWaitingAnimation() {
+        handler.postDelayed(new Runnable() {
+            int dots = 0;
+            @Override
+            public void run() {
+                if (!isWaiting) return;
+
+                dots = (dots + 1) % 4;
+                String waitingText = "Rakip bekleniyor" + ".".repeat(dots);
+                tvWaiting.setText(waitingText);
+
+                handler.postDelayed(this, 500);
+            }
+        }, 500);
+    }
+
+    private void animateButtonClick() {
+        btnCancel.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(100)
+                .withEndAction(() -> {
+                    btnCancel.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(100)
+                            .start();
+                })
+                .start();
+    }
+
     private void startServer() {
         new Thread(() -> {
             try {
@@ -89,7 +175,7 @@ public class HostActivity extends AppCompatActivity {
                 serverSocket.setReuseAddress(true);
                 Log.d(TAG, "Server başlatıldı, port: " + PORT);
 
-                updateStatus("Rakip bekleniyor... (IP: " + Utils.getLocalIpAddress() + ")");
+                updateStatus("🎮 Oda hazır!");
 
                 // Client bağlantısını bekle
                 Socket clientSocket = serverSocket.accept();
@@ -110,19 +196,23 @@ public class HostActivity extends AppCompatActivity {
                 SocketHolder.setConnection(clientSocket, out, in);
 
                 if (!SocketHolder.isReady()) {
-                    updateStatus("Bağlantı hatası!");
+                    updateStatus("❌ Bağlantı hatası!");
                     return;
                 }
 
-                updateStatus("Rakip bağlandı! Oyun hazırlanıyor...");
+                updateStatus("✅ Rakip bağlandı!");
+                handler.post(() -> {
+                    tvWaiting.setText("Oyun başlıyor...");
+                    Toast.makeText(this, "Rakip bağlandı! 🎉", Toast.LENGTH_SHORT).show();
+                });
 
                 // Kısa bir gecikme ile oyuna geç
-                handler.postDelayed(this::goToGame, 500);
+                handler.postDelayed(this::goToGame, 1500);
 
             } catch (Exception e) {
                 Log.e(TAG, "Server hatası: " + e.getMessage());
                 e.printStackTrace();
-                updateStatus("Bağlantı hatası: " + e.getMessage());
+                updateStatus("❌ Hata: " + e.getMessage());
             }
         }).start();
     }
@@ -173,6 +263,7 @@ public class HostActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         isWaiting = false;
+        handler.removeCallbacksAndMessages(null);
 
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
@@ -181,5 +272,12 @@ public class HostActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.e(TAG, "ServerSocket kapatma hatası: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        isWaiting = false;
+        finish();
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
     }
 }

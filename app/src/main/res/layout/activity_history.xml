@@ -1,80 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground"
-    android:padding="16dp">
+    android:orientation="vertical"
+    android:background="@drawable/history_background">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- TITLE -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:text="📜 Geçmiş Oyunlar"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#1A1A2E"
+        android:layout_gravity="center"
+        android:layout_margin="24dp"/>
 
-        <!-- BAŞLIK -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Geçmiş Oyunlar"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="?attr/colorOnSurface"
-            android:layout_marginBottom="12dp"/>
+    <!-- EMPTY STATE -->
+    <TextView
+        android:id="@+id/tvEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Henüz oyun kaydı yok.\n\nHadi ilk oyununu oyna! 🎮"
+        android:textSize="16sp"
+        android:textColor="#757575"
+        android:textAlignment="center"
+        android:fontFamily="sans-serif"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        android:visibility="gone"/>
 
-        <!-- TABLO BAŞLIĞI -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:background="?attr/colorSurface">
+    <!-- GAMES LIST -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="24dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Oyuncu 1"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:text="Skor"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Oyuncu 2"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1.5"
-                android:text="Zorluk"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"/>
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:text="Kazanan"
-                android:textStyle="bold"
-                android:textColor="?attr/colorOnSurface"/>
-        </LinearLayout>
-
-        <!-- SATIRLAR -->
         <LinearLayout
             android:id="@+id/containerHistoryRows"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"/>
+    </ScrollView>
 
-    </LinearLayout>
-</ScrollView>
+</LinearLayout>

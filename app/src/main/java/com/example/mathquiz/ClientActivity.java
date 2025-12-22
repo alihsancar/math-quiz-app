@@ -6,12 +6,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -29,9 +33,11 @@ public class ClientActivity extends AppCompatActivity {
     private static final int PORT = 5050;
     private static final int CONNECTION_TIMEOUT = 10000; // 10 saniye
 
-    private EditText etIp;
-    private TextView tvStatus;
-    private Button btnConnect;
+    private TextInputEditText etIp;
+    private TextInputLayout inputLayout;
+    private TextView tvTitle, tvStatus, tvPlayerName;
+    private MaterialButton btnConnect;
+    private CardView cardInput;
 
     private Handler handler = new Handler(Looper.getMainLooper());
     private volatile boolean isConnecting = false;
@@ -45,16 +51,26 @@ public class ClientActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client);
 
-        initViews();
+        bindViews();
         loadPlayerInfo();
+        animateEntrance();
     }
 
-    private void initViews() {
-        etIp = findViewById(R.id.etIp);
+    private void bindViews() {
+        tvTitle = findViewById(R.id.tvTitle);
         tvStatus = findViewById(R.id.tvStatus);
+        tvPlayerName = findViewById(R.id.tvPlayerName);
+        inputLayout = findViewById(R.id.inputLayout);
+        etIp = findViewById(R.id.etIp);
         btnConnect = findViewById(R.id.btnConnect);
+        cardInput = findViewById(R.id.cardInput);
 
-        btnConnect.setOnClickListener(v -> connect());
+        tvPlayerName.setText(clientName);
+
+        btnConnect.setOnClickListener(v -> {
+            animateButtonClick();
+            new Handler().postDelayed(this::connect, 200);
+        });
 
         // Son kullanılan IP'yi yükle
         SharedPreferences sp = getSharedPreferences("network_prefs", MODE_PRIVATE);
@@ -80,13 +96,66 @@ public class ClientActivity extends AppCompatActivity {
         }
     }
 
+    private void animateEntrance() {
+        // Title fade in
+        tvTitle.setAlpha(0f);
+        tvTitle.setTranslationY(-50f);
+        tvTitle.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(600)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
+
+        // Card scale in
+        cardInput.setScaleX(0.8f);
+        cardInput.setScaleY(0.8f);
+        cardInput.setAlpha(0f);
+        cardInput.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .alpha(1f)
+                .setDuration(600)
+                .setStartDelay(200)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
+
+        // Button from bottom
+        btnConnect.setTranslationY(200f);
+        btnConnect.setAlpha(0f);
+        btnConnect.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(600)
+                .setStartDelay(400)
+                .start();
+    }
+
+    private void animateButtonClick() {
+        btnConnect.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(100)
+                .withEndAction(() -> {
+                    btnConnect.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(100)
+                            .start();
+                })
+                .start();
+    }
+
     private void connect() {
         String ip = etIp.getText().toString().trim();
 
         if (ip.isEmpty()) {
+            inputLayout.setError("IP adresi gerekli!");
             Toast.makeText(this, "IP adresi girin", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        inputLayout.setError(null);
 
         if (isConnecting) {
             Toast.makeText(this, "Bağlantı devam ediyor...", Toast.LENGTH_SHORT).show();
@@ -99,7 +168,7 @@ public class ClientActivity extends AppCompatActivity {
 
         isConnecting = true;
         btnConnect.setEnabled(false);
-        tvStatus.setText("Bağlanıyor...");
+        tvStatus.setText("🔄 Bağlanıyor...");
 
         new Thread(() -> {
             try {
@@ -130,11 +199,11 @@ public class ClientActivity extends AppCompatActivity {
                 }
 
                 handler.post(() -> {
-                    tvStatus.setText("Bağlandı!");
-                    Toast.makeText(this, "Bağlantı başarılı!", Toast.LENGTH_SHORT).show();
+                    tvStatus.setText("✅ Bağlandı!");
+                    Toast.makeText(this, "Bağlantı başarılı! 🎉", Toast.LENGTH_SHORT).show();
 
                     // Kısa gecikme ile oyuna geç
-                    handler.postDelayed(this::goToGame, 500);
+                    handler.postDelayed(this::goToGame, 1000);
                 });
 
             } catch (Exception e) {
@@ -142,8 +211,8 @@ public class ClientActivity extends AppCompatActivity {
                 e.printStackTrace();
 
                 handler.post(() -> {
-                    tvStatus.setText("Bağlantı başarısız: " + e.getMessage());
-                    Toast.makeText(this, "Bağlantı hatası!", Toast.LENGTH_SHORT).show();
+                    tvStatus.setText("❌ Bağlantı başarısız!");
+                    Toast.makeText(this, "Bağlantı hatası: " + e.getMessage(), Toast.LENGTH_LONG).show();
                     btnConnect.setEnabled(true);
                     isConnecting = false;
                 });
@@ -195,5 +264,12 @@ public class ClientActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         isConnecting = false;
+        handler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
     }
 }

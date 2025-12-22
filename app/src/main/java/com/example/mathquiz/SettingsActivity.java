@@ -2,21 +2,31 @@ package com.example.mathquiz;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Button;
+import android.os.Handler;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.RadioButton;
-import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.cardview.widget.CardView;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.materialswitch.MaterialSwitch;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private RadioButton rbEasy, rbMedium, rbHard;
     private RadioButton rbQ5, rbQ7, rbQ10;
     private RadioButton rbT15, rbT20, rbT30, rbT45, rbT60;
-    private Button btnSaveSettings;
-    private Switch switchSound, switchDarkMode;
+    private MaterialButton btnSaveSettings;
+    private MaterialSwitch switchSound, switchDarkMode;
+
+    private CardView cardDifficulty, cardQuestions, cardTime, cardSound, cardDarkMode;
+    private TextView tvTitle;
 
     private SharedPreferences sp;
 
@@ -29,11 +39,24 @@ public class SettingsActivity extends AppCompatActivity {
 
         bindViews();
         loadSettings();
+        animateEntrance();
 
-        btnSaveSettings.setOnClickListener(v -> saveSettings());
+        btnSaveSettings.setOnClickListener(v -> {
+            animateButtonClick();
+            new Handler().postDelayed(this::saveSettings, 200);
+        });
     }
 
     private void bindViews() {
+        tvTitle = findViewById(R.id.tvTitle);
+
+        // Cards
+        cardDifficulty = findViewById(R.id.cardDifficulty);
+        cardQuestions = findViewById(R.id.cardQuestions);
+        cardTime = findViewById(R.id.cardTime);
+        cardSound = findViewById(R.id.cardSound);
+        cardDarkMode = findViewById(R.id.cardDarkMode);
+
         // Zorluk
         rbEasy = findViewById(R.id.rbEasy);
         rbMedium = findViewById(R.id.rbMedium);
@@ -88,6 +111,63 @@ public class SettingsActivity extends AppCompatActivity {
         switchDarkMode.setChecked(darkMode);
     }
 
+    private void animateEntrance() {
+        // Title fade in
+        tvTitle.setAlpha(0f);
+        tvTitle.setTranslationY(-50f);
+        tvTitle.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(600)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
+
+        // Cards slide in from left with stagger
+        animateCard(cardDifficulty, 200);
+        animateCard(cardQuestions, 300);
+        animateCard(cardTime, 400);
+        animateCard(cardSound, 500);
+        animateCard(cardDarkMode, 600);
+
+        // Button bounce from bottom
+        btnSaveSettings.setTranslationY(200f);
+        btnSaveSettings.setAlpha(0f);
+        btnSaveSettings.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(700)
+                .setStartDelay(700)
+                .setInterpolator(new OvershootInterpolator())
+                .start();
+    }
+
+    private void animateCard(CardView card, long delay) {
+        card.setTranslationX(-800f);
+        card.setAlpha(0f);
+        card.animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setDuration(600)
+                .setStartDelay(delay)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
+    }
+
+    private void animateButtonClick() {
+        btnSaveSettings.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(100)
+                .withEndAction(() -> {
+                    btnSaveSettings.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(100)
+                            .start();
+                })
+                .start();
+    }
+
     private void saveSettings() {
         SharedPreferences.Editor ed = sp.edit();
 
@@ -124,9 +204,15 @@ public class SettingsActivity extends AppCompatActivity {
                         : AppCompatDelegate.MODE_NIGHT_NO
         );
 
-        Toast.makeText(this, "Ayarlar kaydedildi", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "✅ Ayarlar kaydedildi!", Toast.LENGTH_SHORT).show();
 
         // Activity düzgün yenilensin
-        recreate();
+        new Handler().postDelayed(this::recreate, 300);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
     }
 }

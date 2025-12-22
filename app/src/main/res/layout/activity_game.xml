@@ -1,166 +1,399 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@drawable/game_background">
 
-    <!-- ÜSTTE SIRA SİZDE (P1) -->
-    <TextView
-        android:id="@+id/tvTurnTop"
+    <!-- Top Gradient Overlay -->
+    <View
+        android:id="@+id/topGradient"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:background="@drawable/gradient_top"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Turn Indicator Badge -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardTurnBadge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sıra Sizde"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:background="#FF6B6B"
-        android:padding="10dp"
-        android:layout_centerHorizontal="true"/>
-
-    <!-- PLAYER 1 -->
-    <LinearLayout
-        android:id="@+id/layoutP1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvTurnTop"
-        android:layout_marginTop="12dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
-
-        <ImageView
-            android:id="@+id/imgP1"
-            android:layout_width="56dp"
-            android:layout_height="56dp"/>
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:id="@+id/tvP1Name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:paddingStart="12dp"/>
-
-        <TextView
-            android:id="@+id/tvP1Score"
+            android:id="@+id/tvTurnTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="18sp"
+            android:text="SENİN SIRAN"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:padding="10dp"
-            android:background="#DDDDDD"/>
-    </LinearLayout>
+            android:textColor="@android:color/white"
+            android:background="@drawable/turn_badge_bg"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:elevation="4dp"/>
+    </androidx.cardview.widget.CardView>
 
-    <!-- ORTA SORU -->
-    <LinearLayout
-        android:id="@+id/layoutQuestion"
-        android:layout_width="match_parent"
+    <!-- Player 1 Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardPlayer1"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="6dp"
+        app:layout_constraintTop_toBottomOf="@id/cardTurnBadge"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <TextView
-            android:id="@+id/tvQuestion"
+        <LinearLayout
+            android:id="@+id/layoutP1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="34sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:background="#EEEEEE"
-            android:padding="24dp"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/player_card_bg"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/tvResultCenter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            android:layout_marginTop="12dp"/>
+            <!-- Avatar Frame -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="4dp">
 
-        <TextView
-            android:id="@+id/tvTimer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginTop="8dp"/>
+                <ImageView
+                    android:id="@+id/imgP1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="Player 1 Avatar"/>
+            </androidx.cardview.widget.CardView>
 
-        <EditText
-            android:id="@+id/etAnswer"
-            android:layout_width="220dp"
-            android:layout_height="wrap_content"
-            android:hint="Cevap"
-            android:gravity="center"
-            android:inputType="numberSigned"
-            android:layout_marginTop="10dp"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
 
-        <Button
-            android:id="@+id/btnSubmit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Gönder"
-            android:layout_marginTop="10dp"/>
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/tvP1Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Oyuncu 1"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"/>
 
-    <!-- PLAYER 2 -->
-    <LinearLayout
-        android:id="@+id/layoutP2"
-        android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aktif"
+                    android:textSize="12sp"
+                    android:textColor="#666666"
+                    android:layout_marginTop="2dp"/>
+            </LinearLayout>
+
+            <!-- Score Badge -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:backgroundTint="#4CAF50">
+
+                <TextView
+                    android:id="@+id/tvP1Score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"/>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Question Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardQuestion"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:cardCornerRadius="24dp"
+        app:cardElevation="12dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/imgP2"
-            android:layout_width="56dp"
-            android:layout_height="56dp"/>
-
-        <TextView
-            android:id="@+id/tvP2Name"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/layoutQuestion"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:paddingStart="12dp"/>
+            android:orientation="vertical"
+            android:background="@drawable/question_card_bg"
+            android:padding="32dp"
+            android:gravity="center">
 
-        <TextView
-            android:id="@+id/tvP2Score"
-            android:layout_width="wrap_content"
+            <!-- Question Text -->
+            <TextView
+                android:id="@+id/tvQuestion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="5 + 3 = ?"
+                android:textSize="42sp"
+                android:textStyle="bold"
+                android:textColor="#1A237E"
+                android:gravity="center"
+                android:letterSpacing="0.05"/>
+
+            <!-- Result Text -->
+            <TextView
+                android:id="@+id/tvResultCenter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DOĞRU! +10"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="#4CAF50"
+                android:visibility="gone"
+                android:layout_marginTop="16dp"
+                android:alpha="0"/>
+
+            <!-- Timer with Icon -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/timer_bg"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⏱"
+                    android:textSize="20sp"
+                    android:layout_marginEnd="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvTimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="30"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF5722"/>
+            </LinearLayout>
+
+            <!-- Answer Input -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                app:boxCornerRadiusTopStart="16dp"
+                app:boxCornerRadiusTopEnd="16dp"
+                app:boxCornerRadiusBottomStart="16dp"
+                app:boxCornerRadiusBottomEnd="16dp"
+                app:boxBackgroundMode="outline"
+                app:boxStrokeColor="#2196F3"
+                app:boxStrokeWidth="2dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etAnswer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Cevabınızı yazın"
+                    android:gravity="center"
+                    android:inputType="numberSigned"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:padding="16dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Submit Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GÖNDER"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginTop="20dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                app:cornerRadius="16dp"
+                app:elevation="4dp"
+                app:backgroundTint="#2196F3"
+                app:icon="@android:drawable/ic_menu_send"
+                app:iconGravity="textEnd"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Player 2 Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardPlayer2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="6dp"
+        app:layout_constraintBottom_toTopOf="@id/tvTurnBottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/layoutP2"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="0"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:padding="10dp"
-            android:background="#DDDDDD"/>
-    </LinearLayout>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/player_card_bg"
+            android:padding="16dp">
 
-    <!-- ALTTA SIRA SİZDE (P2) -->
-    <TextView
-        android:id="@+id/tvTurnBottom"
+            <!-- Avatar Frame -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="4dp">
+
+                <ImageView
+                    android:id="@+id/imgP2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="Player 2 Avatar"/>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
+
+                <TextView
+                    android:id="@+id/tvP2Name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Oyuncu 2"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bekliyor"
+                    android:textSize="12sp"
+                    android:textColor="#666666"
+                    android:layout_marginTop="2dp"/>
+            </LinearLayout>
+
+            <!-- Score Badge -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                android:backgroundTint="#FF9800">
+
+                <TextView
+                    android:id="@+id/tvP2Score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"/>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Turn Counter Badge -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardTurnCounter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sıra Sizde"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:background="#FF6B6B"
-        android:padding="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@id/layoutP2"
-        android:visibility="gone"/>
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- 🔥 SKOR ANİMASYONU -->
+        <TextView
+            android:id="@+id/tvTurnBottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tur 1/5"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/turn_counter_bg"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:visibility="visible"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Score Animation -->
     <TextView
         android:id="@+id/tvScoreAnim"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="+10"
-        android:textSize="28sp"
+        android:textSize="48sp"
         android:textStyle="bold"
-        android:textColor="@android:color/holo_green_dark"
-        android:visibility="gone"/>
+        android:textColor="#4CAF50"
+        android:visibility="gone"
+        android:alpha="0"
+        android:elevation="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-</RelativeLayout>
+    <!-- Bottom Gradient Overlay -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:background="@drawable/gradient_bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

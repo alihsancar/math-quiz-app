@@ -2,11 +2,19 @@ package com.example.mathquiz;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
+import android.os.Handler;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 /**
  * OnlineMenuActivity - Online oyun modu seçim ekranı
@@ -17,49 +25,133 @@ public class OnlineMenuActivity extends AppCompatActivity {
     private String playerName = "";
     private int playerAvatar = R.drawable.avatar1;
 
+    private TextView tvTitle, tvSubtitle;
+    private CardView cardHost, cardJoin;
+    private MaterialButton btnHost, btnJoin;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_online_menu);
 
-        Button btnHost = findViewById(R.id.btnHost);
-        Button btnJoin = findViewById(R.id.btnJoin);
+        bindViews();
+        animateEntrance();
+        setupButtons();
+    }
 
+    private void bindViews() {
+        tvTitle = findViewById(R.id.tvTitle);
+        tvSubtitle = findViewById(R.id.tvSubtitle);
+        cardHost = findViewById(R.id.cardHost);
+        cardJoin = findViewById(R.id.cardJoin);
+        btnHost = findViewById(R.id.btnHost);
+        btnJoin = findViewById(R.id.btnJoin);
+    }
+
+    private void animateEntrance() {
+        // Title fade in
+        tvTitle.setAlpha(0f);
+        tvTitle.setTranslationY(-50f);
+        tvTitle.animate()
+                .alpha(1f)
+                .translationY(0f)
+                .setDuration(600)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
+
+        // Subtitle fade in
+        tvSubtitle.setAlpha(0f);
+        tvSubtitle.animate()
+                .alpha(1f)
+                .setDuration(600)
+                .setStartDelay(200)
+                .start();
+
+        // Host card from left
+        cardHost.setTranslationX(-800f);
+        cardHost.setAlpha(0f);
+        cardHost.animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setDuration(600)
+                .setStartDelay(400)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
+
+        // Join card from right
+        cardJoin.setTranslationX(800f);
+        cardJoin.setAlpha(0f);
+        cardJoin.animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setDuration(600)
+                .setStartDelay(600)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .start();
+    }
+
+    private void setupButtons() {
         btnHost.setOnClickListener(v -> {
-            showNameDialog(true);
+            animateButtonClick(cardHost);
+            new Handler().postDelayed(() -> showNameDialog(true), 200);
         });
 
         btnJoin.setOnClickListener(v -> {
-            showNameDialog(false);
+            animateButtonClick(cardJoin);
+            new Handler().postDelayed(() -> showNameDialog(false), 200);
         });
     }
 
+    private void animateButtonClick(CardView card) {
+        card.animate()
+                .scaleX(0.95f)
+                .scaleY(0.95f)
+                .setDuration(100)
+                .withEndAction(() -> {
+                    card.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(100)
+                            .start();
+                })
+                .start();
+    }
+
     private void showNameDialog(boolean isHost) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("İsminizi Girin");
+        // Modern Material Design dialog
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_player_name, null);
+        TextInputLayout inputLayout = dialogView.findViewById(R.id.inputLayout);
+        TextInputEditText etName = dialogView.findViewById(R.id.etName);
 
-        final EditText input = new EditText(this);
-        input.setHint("İsim");
-        input.setPadding(50, 30, 50, 30);
-        builder.setView(input);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(isHost ? "🎮 Oda Oluştur" : "🔗 Odaya Katıl")
+                .setMessage("İsminizi girin:")
+                .setView(dialogView)
+                .setPositiveButton("Devam", null) // null to override
+                .setNegativeButton("İptal", (d, which) -> d.dismiss())
+                .create();
 
-        builder.setPositiveButton("Tamam", (dialog, which) -> {
-            playerName = input.getText().toString().trim();
+        dialog.setOnShowListener(d -> {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                playerName = etName.getText().toString().trim();
 
-            if (playerName.isEmpty()) {
-                playerName = isHost ? "Host" : "Client";
-            }
+                if (playerName.isEmpty()) {
+                    inputLayout.setError("İsim gerekli!");
+                    return;
+                }
 
-            if (isHost) {
-                startHostActivity();
-            } else {
-                startClientActivity();
-            }
+                inputLayout.setError(null);
+                dialog.dismiss();
+
+                if (isHost) {
+                    startHostActivity();
+                } else {
+                    startClientActivity();
+                }
+            });
         });
 
-        builder.setNegativeButton("İptal", (dialog, which) -> dialog.cancel());
-
-        builder.show();
+        dialog.show();
     }
 
     private void startHostActivity() {
@@ -74,5 +166,11 @@ public class OnlineMenuActivity extends AppCompatActivity {
         intent.putExtra("playerName", playerName);
         intent.putExtra("playerAvatar", playerAvatar);
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
     }
 }

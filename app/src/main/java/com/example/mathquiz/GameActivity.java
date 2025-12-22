@@ -1,6 +1,8 @@
 package com.example.mathquiz;
 
 import android.animation.ObjectAnimator;
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
@@ -10,6 +12,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -19,6 +23,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,9 +40,10 @@ public class GameActivity extends AppCompatActivity {
     private TextView tvP1Name, tvP2Name, tvP1Score, tvP2Score;
     private TextView tvQuestion, tvTimer, tvResultCenter, tvScoreAnim;
     private ImageView imgP1, imgP2;
-    private EditText etAnswer;
-    private Button btnSubmit;
+    private TextInputEditText etAnswer;
+    private MaterialButton btnSubmit;
     private LinearLayout layoutP1, layoutP2;
+    private CardView cardPlayer1, cardPlayer2, cardQuestion, cardTurnBadge;
 
     // Oyuncu Bilgileri
     private String p1Name, p2Name, difficulty;
@@ -112,6 +121,11 @@ public class GameActivity extends AppCompatActivity {
         btnSubmit = findViewById(R.id.btnSubmit);
         layoutP1 = findViewById(R.id.layoutP1);
         layoutP2 = findViewById(R.id.layoutP2);
+
+        cardPlayer1 = findViewById(R.id.cardPlayer1);
+        cardPlayer2 = findViewById(R.id.cardPlayer2);
+        cardQuestion = findViewById(R.id.cardQuestion);
+        cardTurnBadge = findViewById(R.id.cardTurnBadge);
 
         btnSubmit.setOnClickListener(v -> submit());
     }
@@ -254,7 +268,6 @@ public class GameActivity extends AppCompatActivity {
             currentQuestion = Question.fromJson(data);
             turnIndex = message.optInt("turnIndex", turnIndex);
 
-            // Host ayarlarını al
             if (message.has("timePerTurn")) {
                 timePerTurn = message.getInt("timePerTurn");
             }
@@ -263,7 +276,7 @@ public class GameActivity extends AppCompatActivity {
             }
 
             boolean isP1Turn = (turnIndex % 2 == 0);
-            isMyTurn = !isP1Turn; // Client için
+            isMyTurn = !isP1Turn;
 
             Log.d(TAG, "Soru alındı: turnIndex=" + turnIndex + ", totalTurns=" + totalTurns + ", isMyTurn=" + isMyTurn);
 
@@ -281,6 +294,8 @@ public class GameActivity extends AppCompatActivity {
 
                     cancelTimer();
                     startTimer();
+
+                    animateQuestionCard();
                 });
             }
         } catch (JSONException e) {
@@ -301,7 +316,6 @@ public class GameActivity extends AppCompatActivity {
 
             sendAnswerResult(isCorrect);
 
-            // Bu son tur mu kontrol et (turnIndex 0'dan başlıyor, totalTurns-1'e kadar)
             final boolean isLastTurn = (turnIndex >= totalTurns - 1);
             Log.d(TAG, "Host: Cevap alındı, turnIndex=" + turnIndex + ", totalTurns=" + totalTurns + ", isLastTurn=" + isLastTurn);
 
@@ -314,12 +328,12 @@ public class GameActivity extends AppCompatActivity {
                 if (isCorrect) {
                     showCenterText("Rakip DOĞRU!", android.R.color.holo_green_dark);
                     playSound(mpCorrect);
+                    animateScoreIncrease(false);
                 } else {
                     showCenterText("Rakip YANLIŞ! Cevap: " + currentQuestion.answer, android.R.color.holo_red_dark);
                     playSound(mpWrong);
                 }
 
-                // Son tur mu?
                 if (isLastTurn) {
                     Log.d(TAG, "*** SON TUR - OYUN BİTİYOR ***");
                     handler.postDelayed(this::finishGame, 2000);
@@ -350,14 +364,13 @@ public class GameActivity extends AppCompatActivity {
                 if (isCorrect) {
                     showCenterText("DOĞRU! +10", android.R.color.holo_green_dark);
                     playSound(mpCorrect);
+                    animateScoreIncrease(true);
                 } else {
                     showCenterText("YANLIŞ! Cevap: " + (currentQuestion != null ? currentQuestion.answer : "?"), android.R.color.holo_red_dark);
                     playSound(mpWrong);
                 }
 
                 setInputEnabled(false);
-
-                // Client: Sonraki soru veya END_GAME bekle
                 tvQuestion.setText("Bekleniyor...");
             });
 
@@ -410,7 +423,6 @@ public class GameActivity extends AppCompatActivity {
             Log.e(TAG, "Skor parse hatası: " + e.getMessage());
         }
 
-        // HEMEN ResultActivity'ye git
         runOnUiThread(this::goToResult);
     }
 
@@ -471,9 +483,6 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Oyunu bitirir - END_GAME gönderir ve ResultActivity'ye gider
-     */
     private void finishGame() {
         if (gameEnded) return;
 
@@ -482,7 +491,6 @@ public class GameActivity extends AppCompatActivity {
         cancelTimer();
 
         if (isOnline && isHost) {
-            // END_GAME mesajını ayrı thread'de gönder
             new Thread(() -> {
                 try {
                     JSONObject msg = new JSONObject();
@@ -494,18 +502,15 @@ public class GameActivity extends AppCompatActivity {
                     SocketManager.sendSync(msg);
                     Log.d(TAG, "END_GAME gönderildi!");
 
-                    // Mesajın ulaşması için bekle
                     Thread.sleep(500);
 
                 } catch (Exception e) {
                     Log.e(TAG, "END_GAME gönderme hatası: " + e.getMessage());
                 }
 
-                // UI thread'de ResultActivity'ye git
                 runOnUiThread(this::goToResult);
             }).start();
         } else {
-            // Offline veya Client (Client buraya gelmemeli)
             goToResult();
         }
     }
@@ -531,7 +536,6 @@ public class GameActivity extends AppCompatActivity {
 
         Log.d(TAG, "startTurn: turnIndex=" + turnIndex + ", totalTurns=" + totalTurns);
 
-        // Oyun bitti mi kontrol et
         if (turnIndex >= totalTurns) {
             Log.d(TAG, "*** OYUN BİTTİ (startTurn) ***");
             finishGame();
@@ -545,7 +549,6 @@ public class GameActivity extends AppCompatActivity {
         boolean isP1Turn = (turnIndex % 2 == 0);
 
         if (!isOnline) {
-            // OFFLINE
             isMyTurn = true;
             currentQuestion = QuestionGenerator.generate(difficulty);
             tvQuestion.setText(currentQuestion.text);
@@ -553,9 +556,9 @@ public class GameActivity extends AppCompatActivity {
             updateTurnUI();
             setInputEnabled(true);
             startTimer();
+            animateQuestionCard();
 
         } else if (isHost) {
-            // HOST
             isMyTurn = isP1Turn;
             currentQuestion = QuestionGenerator.generate(difficulty);
             tvQuestion.setText(currentQuestion.text);
@@ -564,8 +567,8 @@ public class GameActivity extends AppCompatActivity {
             updateTurnUI();
             setInputEnabled(isMyTurn);
             startTimer();
+            animateQuestionCard();
         }
-        // CLIENT: handleQuestionMessage'da işlenecek
     }
 
     private void setInputEnabled(boolean enabled) {
@@ -588,8 +591,8 @@ public class GameActivity extends AppCompatActivity {
 
         boolean isP1Turn = (turnIndex % 2 == 0);
 
-        layoutP1.setAlpha(isP1Turn ? 1f : 0.4f);
-        layoutP2.setAlpha(isP1Turn ? 0.4f : 1f);
+        animatePlayerCard(cardPlayer1, isP1Turn);
+        animatePlayerCard(cardPlayer2, !isP1Turn);
 
         int currentTurnDisplay = (turnIndex / 2) + 1;
         int totalTurnsDisplay = totalTurns / 2;
@@ -600,14 +603,14 @@ public class GameActivity extends AppCompatActivity {
         if (isOnline) {
             if (isMyTurn) {
                 tvTurnTop.setText("SENİN SIRAN");
-                tvTurnTop.setBackgroundColor(getResources().getColor(android.R.color.holo_green_dark));
+                animateTurnBadge(android.R.color.holo_green_dark);
             } else {
                 tvTurnTop.setText("RAKİBİN SIRASI");
-                tvTurnTop.setBackgroundColor(getResources().getColor(android.R.color.holo_red_light));
+                animateTurnBadge(android.R.color.holo_red_light);
             }
         } else {
             tvTurnTop.setText(isP1Turn ? p1Name + " oynuyor" : p2Name + " oynuyor");
-            tvTurnTop.setBackgroundColor(getResources().getColor(android.R.color.holo_blue_light));
+            animateTurnBadge(android.R.color.holo_blue_light);
         }
     }
 
@@ -621,7 +624,7 @@ public class GameActivity extends AppCompatActivity {
             if (isDestroyed || gameEnded) return;
 
             timerRunning = true;
-            tvTimer.setText("Süre: " + timePerTurn);
+            tvTimer.setText(String.valueOf(timePerTurn));
             tvTimer.setTextColor(getResources().getColor(android.R.color.black));
 
             timer = new CountDownTimer(timePerTurn * 1000L, 1000) {
@@ -633,10 +636,11 @@ public class GameActivity extends AppCompatActivity {
                     }
 
                     int secondsLeft = (int) (ms / 1000);
-                    tvTimer.setText("Süre: " + secondsLeft);
+                    tvTimer.setText(String.valueOf(secondsLeft));
 
                     if (secondsLeft <= 5) {
                         tvTimer.setTextColor(getResources().getColor(android.R.color.holo_red_dark));
+                        animateTimer();
                     }
                 }
 
@@ -644,7 +648,7 @@ public class GameActivity extends AppCompatActivity {
                 public void onFinish() {
                     if (!timerRunning || isDestroyed || gameEnded) return;
                     timerRunning = false;
-                    tvTimer.setText("Süre: 0");
+                    tvTimer.setText("0");
                     handleTimeout();
                 }
             };
@@ -671,15 +675,12 @@ public class GameActivity extends AppCompatActivity {
         showCenterText("SÜRE BİTTİ!", android.R.color.holo_orange_dark);
         setInputEnabled(false);
 
-        // Son tur mu kontrol et
         final boolean isLastTurn = (turnIndex >= totalTurns - 1);
 
         if (isOnline) {
             if (isMyTurn && !isHost) {
-                // Client timeout
                 sendAnswer(-99999);
             } else if (isMyTurn && isHost) {
-                // Host timeout
                 if (isLastTurn) {
                     handler.postDelayed(this::finishGame, 2000);
                 } else {
@@ -687,7 +688,6 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         } else {
-            // Offline
             if (isLastTurn) {
                 handler.postDelayed(this::finishGame, 2000);
             } else {
@@ -722,12 +722,10 @@ public class GameActivity extends AppCompatActivity {
         }
 
         if (isOnline && !isHost) {
-            // CLIENT
             sendAnswer(userAnswer);
             return;
         }
 
-        // OFFLINE veya HOST kendi cevabı
         boolean correct = (currentQuestion != null && userAnswer == currentQuestion.answer);
 
         if (correct) {
@@ -736,10 +734,11 @@ public class GameActivity extends AppCompatActivity {
                 if (isP1Turn) p1Score += 10;
                 else p2Score += 10;
             } else {
-                p1Score += 10; // Host = P1
+                p1Score += 10;
             }
             showCenterText("DOĞRU! +10", android.R.color.holo_green_dark);
             playSound(mpCorrect);
+            animateScoreIncrease(isOnline ? true : (turnIndex % 2 == 0));
         } else {
             showCenterText("YANLIŞ! Cevap: " + (currentQuestion != null ? currentQuestion.answer : "?"), android.R.color.holo_red_dark);
             playSound(mpWrong);
@@ -747,15 +746,12 @@ public class GameActivity extends AppCompatActivity {
 
         updateScoreUI();
 
-        // Son tur mu kontrol et
         final boolean isLastTurn = (turnIndex >= totalTurns - 1);
-        Log.d(TAG, "Host cevap verdi: turnIndex=" + turnIndex + ", isLastTurn=" + isLastTurn);
+        Log.d(TAG, "Cevap verdi: turnIndex=" + turnIndex + ", isLastTurn=" + isLastTurn);
 
         if (isLastTurn && isOnline) {
-            // Online son tur - oyunu bitir
             handler.postDelayed(this::finishGame, 2000);
         } else if (isLastTurn && !isOnline) {
-            // Offline son tur
             handler.postDelayed(this::finishGame, 2000);
         } else {
             handler.postDelayed(this::nextTurn, 2000);
@@ -786,10 +782,16 @@ public class GameActivity extends AppCompatActivity {
         tvResultCenter.setText(text);
         tvResultCenter.setTextColor(getResources().getColor(colorRes));
         tvResultCenter.setVisibility(View.VISIBLE);
+        tvResultCenter.setAlpha(0f);
+
+        tvResultCenter.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .start();
     }
 
     private void playSound(MediaPlayer mp) {
-        if (mp != null && !isDestroyed) {
+        if (mp != null && !isDestroyed && soundOn) {
             try {
                 mp.seekTo(0);
                 mp.start();
@@ -798,6 +800,123 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
+
+    // ==================== ANİMASYONLAR ====================
+
+    private void animateQuestionCard() {
+        if (isDestroyed || cardQuestion == null) return;
+
+        cardQuestion.setScaleX(0.8f);
+        cardQuestion.setScaleY(0.8f);
+        cardQuestion.setAlpha(0f);
+
+        cardQuestion.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .alpha(1f)
+                .setDuration(400)
+                .setInterpolator(new OvershootInterpolator())
+                .start();
+    }
+
+    private void animatePlayerCard(CardView card, boolean active) {
+        if (isDestroyed || card == null) return;
+
+        float targetAlpha = active ? 1f : 0.5f;
+        float targetScale = active ? 1.05f : 0.95f;
+
+        card.animate()
+                .alpha(targetAlpha)
+                .scaleX(targetScale)
+                .scaleY(targetScale)
+                .setDuration(300)
+                .setInterpolator(new DecelerateInterpolator())
+                .start();
+    }
+
+    private void animateTurnBadge(int colorRes) {
+        if (isDestroyed || cardTurnBadge == null) return;
+
+        cardTurnBadge.animate()
+                .scaleX(1.1f)
+                .scaleY(1.1f)
+                .setDuration(200)
+                .withEndAction(() -> {
+                    if (!isDestroyed) {
+                        cardTurnBadge.animate()
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setDuration(200)
+                                .start();
+                    }
+                })
+                .start();
+    }
+
+    private void animateTimer() {
+        if (isDestroyed || tvTimer == null) return;
+
+        tvTimer.animate()
+                .scaleX(1.3f)
+                .scaleY(1.3f)
+                .setDuration(100)
+                .withEndAction(() -> {
+                    if (!isDestroyed && tvTimer != null) {
+                        tvTimer.animate()
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setDuration(100)
+                                .start();
+                    }
+                })
+                .start();
+    }
+
+    private void animateScoreIncrease(boolean isPlayer1) {
+        if (isDestroyed || tvScoreAnim == null) return;
+
+        TextView targetScore = isPlayer1 ? tvP1Score : tvP2Score;
+
+        int[] location = new int[2];
+        targetScore.getLocationOnScreen(location);
+
+        tvScoreAnim.setX(location[0]);
+        tvScoreAnim.setY(location[1] - 100);
+        tvScoreAnim.setText("+10");
+        tvScoreAnim.setVisibility(View.VISIBLE);
+        tvScoreAnim.setAlpha(1f);
+        tvScoreAnim.setScaleX(0.5f);
+        tvScoreAnim.setScaleY(0.5f);
+
+        AnimatorSet animSet = new AnimatorSet();
+
+        ObjectAnimator scaleX = ObjectAnimator.ofFloat(tvScoreAnim, "scaleX", 0.5f, 1.5f);
+        ObjectAnimator scaleY = ObjectAnimator.ofFloat(tvScoreAnim, "scaleY", 0.5f, 1.5f);
+        ObjectAnimator alpha = ObjectAnimator.ofFloat(tvScoreAnim, "alpha", 1f, 0f);
+        ObjectAnimator translateY = ObjectAnimator.ofFloat(tvScoreAnim, "translationY", 0f, -150f);
+
+        animSet.playTogether(scaleX, scaleY, alpha, translateY);
+        animSet.setDuration(1000);
+        animSet.setInterpolator(new DecelerateInterpolator());
+        animSet.start();
+
+        targetScore.animate()
+                .scaleX(1.3f)
+                .scaleY(1.3f)
+                .setDuration(200)
+                .withEndAction(() -> {
+                    if (!isDestroyed && targetScore != null) {
+                        targetScore.animate()
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setDuration(200)
+                                .start();
+                    }
+                })
+                .start();
+    }
+
+    // ==================== DİĞER ====================
 
     private void goToResult() {
         if (isFinishing) {
@@ -813,7 +932,6 @@ public class GameActivity extends AppCompatActivity {
         cancelTimer();
         handler.removeCallbacksAndMessages(null);
 
-        // Socket'i temizle
         if (isOnline) {
             try {
                 SocketManager.setListener(null);
@@ -825,7 +943,6 @@ public class GameActivity extends AppCompatActivity {
             }
         }
 
-        // ResultActivity'ye git
         try {
             Intent intent = new Intent(this, ResultActivity.class);
             intent.putExtra("p1Name", p1Name);
